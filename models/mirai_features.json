@@ -1,0 +1,39 @@
+{
+    "stage1_features": [
+        "AGE",
+        "PTGENDER",
+        "PTEDUCAT"
+    ],
+    "stage2_features": [
+        "AGE",
+        "PTGENDER",
+        "PTEDUCAT",
+        "APOE4"
+    ],
+    "stage3_features": [
+        "AB40_F",
+        "AB42_AB40_F",
+        "AB42_F",
+        "AGE",
+        "APOE4",
+        "GFAP_Q",
+        "NfL_Q",
+        "PTEDUCAT",
+        "PTGENDER",
+        "pT217_AB42_F",
+        "AB42_F_missing",
+        "AB40_F_missing",
+        "AB42_AB40_F_missing",
+        "pT217_AB42_F_missing",
+        "NfL_Q_missing",
+        "GFAP_Q_missing"
+    ],
+    "plasma_features_stage3": [
+        "AB42_F",
+        "AB40_F",
+        "AB42_AB40_F",
+        "pT217_AB42_F",
+        "NfL_Q",
+        "GFAP_Q"
+    ]
+}

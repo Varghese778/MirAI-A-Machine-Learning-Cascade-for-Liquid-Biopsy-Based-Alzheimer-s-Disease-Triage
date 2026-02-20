@@ -1,0 +1,53 @@
+# ─── ADNI Data Files (large / access-restricted) ───────────────
+*.csv
+
+# ─── Large derived artifact snapshots (generated during training runs) ────────
+artifacts_20260217_225755/
+artifacts_*/
+
+# ─── Python Virtual Environment ──────────────────────────────────────────────
+med/
+venv/
+.venv/
+env/
+
+# ─── Python Caches (all depths) ─────────────────────────────────────────────
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pycache
+
+# ─── Jupyter Notebook Checkpoints ────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ─── Compiled / Build Artefacts ──────────────────────────────────────────────
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ─── OS / Editor Noise ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─── Flask / Web App ─────────────────────────────────────────────────────────
+instance/
+*.pyflakes
+
+# ─── Internal dev / scratch files (not for public repo) ──────────────────────
+flaws.md
+trial*.ipynb
+
+# ─── Secrets & Local Config ──────────────────────────────────────────────────
+.env
+*.env
+secrets.*
+
+

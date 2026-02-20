@@ -1,0 +1,16 @@
+# MirAI — Notebook & Training Environment
+# Generated from pinned research environment (Python 3.12)
+# Install with: pip install -r requirements.txt
+
+xgboost==3.2.0
+scikit-learn==1.8.0
+pandas==3.0.0
+numpy==2.3.5
+scipy==1.17.0
+shap==0.50.0
+matplotlib==3.10.8
+seaborn==0.13.2
+joblib==1.5.3
+numba==0.63.1
+ipykernel==7.2.0
+jupyter

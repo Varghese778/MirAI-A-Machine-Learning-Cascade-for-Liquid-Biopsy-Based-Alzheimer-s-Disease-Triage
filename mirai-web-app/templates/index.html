@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="MirAI — a compassionate, research-grade Alzheimer's risk screening tool powered by plasma biomarkers and machine learning." />
+    <title>MirAI · Alzheimer's Risk Screening</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+
+    <!-- ── Ambient background blobs ───────────────────────────────── -->
+    <div class="blob blob-1" aria-hidden="true"></div>
+    <div class="blob blob-2" aria-hidden="true"></div>
+    <div class="blob blob-3" aria-hidden="true"></div>
+
+    <!-- ── Page wrapper ───────────────────────────────────────────── -->
+    <div class="page-shell">
+
+        <!-- Hero header -->
+        <header class="site-header">
+            <div class="logo-mark" aria-hidden="true">🧠</div>
+            <h1 class="site-title">Mir<span class="accent">AI</span></h1>
+            <p class="site-tagline">A gentle, research-grade early screening tool for Alzheimer's risk.</p>
+            <p class="disclaimer">
+                ⚠️&nbsp; <strong>Research prototype only.</strong> Not a certified medical device.
+                Always consult a qualified clinician for diagnostic decisions.
+            </p>
+        </header>
+
+        <!-- ── Main card ───────────────────────────────────────────── -->
+        <main class="card" id="screening-card">
+
+            <!-- Progress ribbon -->
+            <div class="progress-bar-track" aria-hidden="true">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+
+            <!-- Step indicator -->
+            <div class="step-indicator" id="step-indicator" aria-live="polite">
+                <span class="step-dot active" data-step="1"></span>
+                <span class="step-dot" data-step="2"></span>
+                <span class="step-dot" data-step="3"></span>
+            </div>
+
+            <form id="screening-form" novalidate>
+
+                <!-- ─────────────────────── STEP 1: Demographics ──────── -->
+                <fieldset class="step-panel active" id="step-1" data-step="1">
+                    <legend class="step-legend">
+                        <span class="step-num">01</span>
+                        <span class="step-title">A little about you</span>
+                    </legend>
+                    <p class="step-desc">These basic details help us understand your demographic risk profile.</p>
+
+                    <div class="field-grid">
+
+                        <div class="field-block">
+                            <label for="age">Age <span class="unit">(years)</span></label>
+                            <input type="number" id="age" name="AGE" min="40" max="110" step="1" placeholder="e.g. 68"
+                                required />
+                            <span class="field-hint">Between 40 and 110</span>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="gender">Biological sex assigned at birth</label>
+                            <div class="select-wrapper">
+                                <select id="gender" name="PTGENDER" required>
+                                    <option value="" disabled selected>Select…</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Male">Male</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="education">Years of education <span class="unit">(total)</span></label>
+                            <input type="number" id="education" name="PTEDUCAT" min="0" max="30" step="1"
+                                placeholder="e.g. 16" required />
+                            <span class="field-hint">E.g. 12 = high school, 16 = bachelor's</span>
+                        </div>
+
+                    </div>
+
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-primary" id="next-1">
+                            Continue to Genetics <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+                </fieldset>
+
+                <!-- ─────────────────────── STEP 2: Genetics ─────────── -->
+                <fieldset class="step-panel" id="step-2" data-step="2">
+                    <legend class="step-legend">
+                        <span class="step-num">02</span>
+                        <span class="step-title">Genetic risk factor</span>
+                    </legend>
+                    <p class="step-desc">
+                        The APOE4 gene variant is the strongest known genetic risk factor for late-onset Alzheimer's.
+                        You may know your status from a genetic test.
+                    </p>
+
+                    <div class="field-grid">
+
+                        <div class="field-block wide">
+                            <label for="apoe4">APOE4 allele count</label>
+                            <div class="radio-group" role="group" aria-labelledby="apoe4-label">
+                                <label class="radio-card" id="apoe4-0-label">
+                                    <input type="radio" name="APOE4" value="0" id="apoe4-0" />
+                                    <span class="rc-icon">0</span>
+                                    <span class="rc-text">No&nbsp;copies<br /><small>Lowest genetic risk</small></span>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="APOE4" value="1" id="apoe4-1" />
+                                    <span class="rc-icon">1</span>
+                                    <span class="rc-text">One&nbsp;copy<br /><small>Moderate genetic risk</small></span>
+                                </label>
+                                <label class="radio-card">
+                                    <input type="radio" name="APOE4" value="2" id="apoe4-2" />
+                                    <span class="rc-icon">2</span>
+                                    <span class="rc-text">Two&nbsp;copies<br /><small>Higher genetic risk</small></span>
+                                </label>
+                            </div>
+                            <p class="inline-optional">
+                                <button type="button" class="link-btn" id="skip-genetics">
+                                    I don't know my APOE4 status — skip this step
+                                </button>
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-ghost" id="back-1">← Back</button>
+                        <button type="button" class="btn btn-primary" id="next-2">
+                            Continue to Biomarkers <span class="btn-arrow">→</span>
+                        </button>
+                    </div>
+                </fieldset>
+
+                <!-- ─────────────────────── STEP 3: Plasma Biomarkers ── -->
+                <fieldset class="step-panel" id="step-3" data-step="3">
+                    <legend class="step-legend">
+                        <span class="step-num">03</span>
+                        <span class="step-title">Plasma biomarkers <span class="optional-badge">optional</span></span>
+                    </legend>
+                    <p class="step-desc">
+                        If you or your clinician have plasma (blood-based) biomarker results, enter them below.
+                        These are the most powerful predictors in the model.
+                        <strong>Leave blank if unavailable</strong> — the model will account for missingness gracefully.
+                    </p>
+
+                    <div class="field-grid">
+
+                        <div class="field-block">
+                            <label for="ab42">Aβ42 <span class="unit">(pg/mL)</span></label>
+                            <input type="number" id="ab42" name="AB42_F" min="0" step="any" placeholder="e.g. 892.4" />
+                            <span class="field-hint">Plasma amyloid beta-42</span>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="ab40">Aβ40 <span class="unit">(pg/mL)</span></label>
+                            <input type="number" id="ab40" name="AB40_F" min="0" step="any"
+                                placeholder="e.g. 14200.0" />
+                            <span class="field-hint">Plasma amyloid beta-40</span>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="ab4240">Aβ42/40 ratio</label>
+                            <input type="number" id="ab4240" name="AB42_AB40_F" min="0" step="any"
+                                placeholder="e.g. 0.0628" />
+                            <span class="field-hint">Amyloid burden indicator</span>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="pt217">pT217/Aβ42 ratio <span class="tip-icon"
+                                    title="Strongest AD pathology signal in the model">ⓘ</span></label>
+                            <input type="number" id="pt217" name="pT217_AB42_F" min="0" step="any"
+                                placeholder="e.g. 0.312" />
+                            <span class="field-hint">Phospho-tau 217 / Aβ42 — strongest signal</span>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="nfl">NfL <span class="unit">(pg/mL)</span></label>
+                            <input type="number" id="nfl" name="NfL_Q" min="0" step="any" placeholder="e.g. 18.7" />
+                            <span class="field-hint">Neurofilament Light — neurodegeneration marker</span>
+                        </div>
+
+                        <div class="field-block">
+                            <label for="gfap">GFAP <span class="unit">(pg/mL)</span></label>
+                            <input type="number" id="gfap" name="GFAP_Q" min="0" step="any" placeholder="e.g. 245.0" />
+                            <span class="field-hint">Glial Fibrillary Acidic Protein</span>
+                        </div>
+
+                    </div>
+
+                    <div class="step-nav">
+                        <button type="button" class="btn btn-ghost" id="back-2">← Back</button>
+                        <button type="submit" class="btn btn-submit" id="submit-btn">
+                            <span class="btn-label">Run My Screening</span>
+                            <span class="btn-icon">🌿</span>
+                        </button>
+                    </div>
+                </fieldset>
+
+            </form>
+
+            <!-- ── Loading state ───────────────────────────────────────── -->
+            <div class="loading-panel hidden" id="loading-panel" aria-live="polite" aria-busy="true">
+                <div class="loader-ring">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+                <p class="loading-text">Analysing your profile with care…</p>
+            </div>
+
+            <!-- ── Result panel ────────────────────────────────────────── -->
+            <div class="result-panel hidden" id="result-panel" aria-live="polite">
+
+                <div class="result-icon" id="result-icon" aria-hidden="true"></div>
+                <h2 class="result-category" id="result-category"></h2>
+
+                <!-- Gauge -->
+                <div class="gauge-container" role="img" aria-label="Risk probability gauge">
+                    <svg class="gauge-svg" viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Track arc -->
+                        <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
+                            stroke-linecap="round" />
+                        <!-- Value arc -->
+                        <path class="gauge-fill" id="gauge-arc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
+                            stroke-linecap="round" />
+                        <!-- Needle -->
+                        <line class="gauge-needle" id="gauge-needle" x1="100" y1="100" x2="100" y2="28"
+                            stroke-linecap="round" />
+                        <circle cx="100" cy="100" r="6" class="gauge-pivot" />
+                    </svg>
+                    <div class="gauge-value" id="gauge-value">0%</div>
+                    <div class="gauge-labels">
+                        <span>Low</span>
+                        <span>Moderate</span>
+                        <span>High</span>
+                    </div>
+                </div>
+
+                <p class="result-message" id="result-message"></p>
+                <p class="result-stage" id="result-stage"></p>
+
+                <div class="result-actions">
+                    <button type="button" class="btn btn-ghost" id="restart-btn">
+                        ↩ Start a new screening
+                    </button>
+                </div>
+
+                <p class="result-disclaimer">
+                    This result is produced by an experimental ML model trained on ADNI research data.
+                    It is <strong>not a diagnosis</strong>. Please share with your healthcare provider.
+                </p>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <p>Built with ADNI Data as part of the <strong>MirAI</strong> project.</p>
+        </footer>
+
+    </div><!-- /page-shell -->
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
