@@ -2,284 +2,506 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MirAI | Liquid Biopsy-Based Alzheimer's Disease Triage</title>
     <meta name="description"
-        content="MirAI — a compassionate, research-grade Alzheimer's risk screening tool powered by plasma biomarkers and machine learning." />
-    <title>MirAI · Alzheimer's Risk Screening</title>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap"
-        rel="stylesheet" />
-
-    <link rel="stylesheet" href="/static/style.css" />
+        content="MirAI is a 3-Stage Machine Learning Cascade for Alzheimer's Disease triage using demographics, genetics, and plasma biomarkers.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+    <!-- Chart.js for the Risk Gauge -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
+    <!-- Epic Neural Background -->
+    <div class="neural-background"></div>
 
-    <!-- ── Ambient background blobs ───────────────────────────────── -->
-    <div class="blob blob-1" aria-hidden="true"></div>
-    <div class="blob blob-2" aria-hidden="true"></div>
-    <div class="blob blob-3" aria-hidden="true"></div>
+    <!-- Floating Geometric Shapes -->
+    <div class="geometric-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
 
-    <!-- ── Page wrapper ───────────────────────────────────────────── -->
-    <div class="page-shell">
+    <!-- Neural Network Lines -->
+    <div class="neural-lines">
+        <div class="neural-line"></div>
+        <div class="neural-line"></div>
+        <div class="neural-line"></div>
+    </div>
 
-        <!-- Hero header -->
-        <header class="site-header">
-            <div class="logo-mark" aria-hidden="true">🧠</div>
-            <h1 class="site-title">Mir<span class="accent">AI</span></h1>
-            <p class="site-tagline">A gentle, research-grade early screening tool for Alzheimer's risk.</p>
-            <p class="disclaimer">
-                ⚠️&nbsp; <strong>Research prototype only.</strong> Not a certified medical device.
-                Always consult a qualified clinician for diagnostic decisions.
-            </p>
-        </header>
+    <!-- Header -->
+    <header class="glass">
+        <nav>
+            <a href="#home" class="logo">
+                <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#e0a3ff" />
+                            <stop offset="50%" style="stop-color:#ff69b4" />
+                            <stop offset="100%" style="stop-color:#9370db" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="30" r="8" fill="url(#logoGradient)" opacity="0.8">
+                        <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="30" cy="60" r="6" fill="url(#logoGradient)" opacity="0.6">
+                        <animate attributeName="opacity" values="0.6;1;0.6" dur="2.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="70" cy="65" r="7" fill="url(#logoGradient)" opacity="0.7">
+                        <animate attributeName="opacity" values="0.7;1;0.7" dur="1.8s" repeatCount="indefinite" />
+                    </circle>
+                    <line x1="50" y1="30" x2="30" y2="60" stroke="url(#logoGradient)" stroke-width="2" opacity="0.6">
+                        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="50" y1="30" x2="70" y2="65" stroke="url(#logoGradient)" stroke-width="2" opacity="0.6">
+                        <animate attributeName="opacity" values="0.6;1;0.6" dur="2.2s" repeatCount="indefinite" />
+                    </line>
+                    <line x1="30" y1="60" x2="70" y2="65" stroke="url(#logoGradient)" stroke-width="2" opacity="0.6">
+                        <animate attributeName="opacity" values="0.6;1;0.6" dur="2.8s" repeatCount="indefinite" />
+                    </line>
+                </svg>
+                MirAI
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">The Cascade</a></li>
+                <li><a href="#showcase">Metrics</a></li>
+                <li><a href="#timeline">How it Works</a></li>
+                <li><a href="#screening">Screen Patient</a></li>
+            </ul>
+            <div class="mobile-menu-toggle">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
+        </nav>
+        <div class="mobile-nav">
+            <a href="#features">The Cascade</a>
+            <a href="#showcase">Metrics</a>
+            <a href="#timeline">How it Works</a>
+            <a href="#screening">Screen Patient</a>
+        </div>
+    </header>
 
-        <!-- ── Main card ───────────────────────────────────────────── -->
-        <main class="card" id="screening-card">
+    <!-- Section 1: Hero -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-subtitle">Investigational Clinical Screening Tool</div>
+            <h1>ALZHEIMER'S DISEASE TRIAGE CASCADE</h1>
 
-            <!-- Progress ribbon -->
-            <div class="progress-bar-track" aria-hidden="true">
-                <div class="progress-bar-fill" id="progress-fill"></div>
+            <div class="hero-description">
+                <p>MirAI is a 3-Stage Machine Learning Cascade that leverages demographics, genetics, and liquid biopsy
+                    plasma biomarkers to provide rapid, non-invasive Alzheimer's disease risk triage. Designed to
+                    minimize unnecessary invasive procedures.</p>
             </div>
 
-            <!-- Step indicator -->
-            <div class="step-indicator" id="step-indicator" aria-live="polite">
-                <span class="step-dot active" data-step="1"></span>
-                <span class="step-dot" data-step="2"></span>
-                <span class="step-dot" data-step="3"></span>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="hero-stat-number">~0.68</span>
+                    <span class="hero-stat-label">Stage 1 AUC</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">~0.70</span>
+                    <span class="hero-stat-label">Stage 2 AUC</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">~0.80</span>
+                    <span class="hero-stat-label">Stage 3 AUC</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="hero-stat-number">3</span>
+                    <span class="hero-stat-label">XGBoost Stages</span>
+                </div>
             </div>
 
-            <form id="screening-form" novalidate>
+            <div class="cta-buttons">
+                <a href="#screening" class="cta-button">Begin Patient Screening</a>
+                <a href="#features" class="cta-button secondary">Explore The Cascade</a>
+            </div>
+        </div>
+    </section>
 
-                <!-- ─────────────────────── STEP 1: Demographics ──────── -->
-                <fieldset class="step-panel active" id="step-1" data-step="1">
-                    <legend class="step-legend">
-                        <span class="step-num">01</span>
-                        <span class="step-title">A little about you</span>
-                    </legend>
-                    <p class="step-desc">These basic details help us understand your demographic risk profile.</p>
+    <!-- Section 2: The 3-Stage Cascade (Features) -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <h2 class="section-title">THE 3-STAGE CASCADE</h2>
+            <div class="diagonal-grid">
+                <div class="feature-row">
+                    <div class="feature-content glass">
+                        <div class="feature-icon stage-icon">01</div>
+                        <h3>Clinical Demographics</h3>
+                        <p>The first gate uses the most accessible patient data: Age, Biological Sex, and Years of
+                            Education. While limited in predictive power alone (AUC ~0.68), it serves as the baseline
+                            anchor for subsequent stages, filtering patients who clearly need further evaluation.</p>
+                    </div>
+                    <div class="feature-visual glass"
+                        style="background-image: url('/static/images/mirai-stage-01.jpg');"></div>
+                </div>
 
-                    <div class="field-grid">
+                <div class="feature-row">
+                    <div class="feature-content glass">
+                        <div class="feature-icon stage-icon">02</div>
+                        <h3>Genetic Risk (APOE4)</h3>
+                        <p>Incorporates APOE e4 allele carrier status -- the strongest established genetic risk factor
+                            for late-onset Alzheimer's disease. Adding this single genetic marker slightly improves
+                            confidence (AUC ~0.70), capturing inherited risk that demographics alone cannot model.</p>
+                    </div>
+                    <div class="feature-visual glass"
+                        style="background-image: url('/static/images/mirai-stage-02.jpg');"></div>
+                </div>
 
-                        <div class="field-block">
-                            <label for="age">Age <span class="unit">(years)</span></label>
-                            <input type="number" id="age" name="AGE" min="40" max="110" step="1" placeholder="e.g. 68"
-                                required />
-                            <span class="field-hint">Between 40 and 110</span>
+                <div class="feature-row">
+                    <div class="feature-content glass">
+                        <div class="feature-icon stage-icon">03</div>
+                        <h3>Liquid Biopsy (Plasma)</h3>
+                        <p>The most powerful stage integrates plasma biomarkers: pTau-217/AB42 ratio, NfL (Neurofilament
+                            Light), and GFAP. This significantly lifts diagnostic performance to AUC ~0.80, acting as a
+                            non-invasive gatekeeper before expensive PET scans or CSF lumbar punctures.</p>
+                    </div>
+                    <div class="feature-visual glass"
+                        style="background-image: url('/static/images/mirai-stage-03.jpg');"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Dashboard Metrics (Hexagonal Showcase) -->
+    <section class="showcase" id="showcase">
+        <h2 class="section-title">CLINICAL DASHBOARD</h2>
+        <div class="hexagon-container">
+            <div class="hexagon">
+                <div class="hexagon-inner glass">
+                    <div class="hexagon-icon">&#x1F9EC;</div>
+                    <h4>128</h4>
+                    <p>Patients Screened This Month</p>
+                </div>
+            </div>
+            <div class="hexagon">
+                <div class="hexagon-inner glass">
+                    <div class="hexagon-icon">&#x26A0;&#xFE0F;</div>
+                    <h4>14</h4>
+                    <p>High-Risk Flags</p>
+                </div>
+            </div>
+            <div class="hexagon">
+                <div class="hexagon-inner glass">
+                    <div class="hexagon-icon">&#x26A1;</div>
+                    <h4>1.2s</h4>
+                    <p>Avg Processing Time</p>
+                </div>
+            </div>
+            <div class="hexagon">
+                <div class="hexagon-inner glass">
+                    <div class="hexagon-icon">&#x1F4CA;</div>
+                    <h4>0.80</h4>
+                    <p>Best Stage AUC</p>
+                </div>
+            </div>
+            <div class="hexagon">
+                <div class="hexagon-inner glass">
+                    <div class="hexagon-icon">&#x1F3AF;</div>
+                    <h4>3</h4>
+                    <p>XGBoost Models</p>
+                </div>
+            </div>
+            <div class="hexagon">
+                <div class="hexagon-inner glass">
+                    <div class="hexagon-icon">&#x1F52C;</div>
+                    <h4>ADNI</h4>
+                    <p>Training Dataset</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: How it Works (Timeline) -->
+    <section class="timeline" id="timeline">
+        <h2 class="section-title">HOW IT WORKS</h2>
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-item">
+                <div class="timeline-content glass">
+                    <div class="timeline-year">Step 1</div>
+                    <h4>Collect Demographics</h4>
+                    <p>The clinician enters basic patient information: Age, Biological Sex, and total years of formal
+                        education. This data is universally available in any clinical setting with zero additional cost.
+                    </p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content glass">
+                    <div class="timeline-year">Step 2</div>
+                    <h4>Add Genetic Data (Optional)</h4>
+                    <p>If APOE genotyping results are available, the clinician enters the APOE e4 carrier status (0, 1,
+                        or 2 alleles). If genetics aren't available, MirAI gracefully falls back to Stage 1 prediction.
+                    </p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content glass">
+                    <div class="timeline-year">Step 3</div>
+                    <h4>Enter Plasma Biomarkers (Optional)</h4>
+                    <p>For the highest-confidence prediction, plasma biomarker values are entered: pTau-217/AB42 ratio,
+                        NfL (Neurofilament Light), and GFAP. These liquid biopsy markers dramatically improve
+                        sensitivity.</p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content glass">
+                    <div class="timeline-year">Result</div>
+                    <h4>Receive Risk Assessment</h4>
+                    <p>MirAI's XGBoost cascade produces a probability score indicating MCI/Dementia risk, along with a
+                        clinical interpretation and recommended next steps. Results are generated in under 2 seconds.
+                    </p>
+                </div>
+                <div class="timeline-dot"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Patient Screening Wizard (Contact Section Repurposed) -->
+    <section class="contact" id="screening">
+        <div class="contact-container">
+            <div class="contact-info glass">
+                <h3>PATIENT SCREENING</h3>
+                <p>Enter available clinical data below. The 3-Stage Cascade will evaluate risk incrementally based on
+                    the data you provide.</p>
+                <p>All fields in Stage 1 are required. Stages 2 and 3 are optional -- MirAI will automatically select
+                    the best model based on available inputs.</p>
+
+                <!-- Wizard Progress -->
+                <div class="wizard-progress-container">
+                    <div class="wizard-progress-header">
+                        <span id="wizard-step-title">Stage 1: Demographics</span>
+                        <span id="wizard-step-counter">Step 1 of 3</span>
+                    </div>
+                    <div class="wizard-progress-track">
+                        <div class="wizard-progress-fill" id="wizard-progress-bar" style="width: 33%"></div>
+                    </div>
+                    <div class="wizard-stages-labels">
+                        <span class="stage-label active" id="stage-label-1">Demographics</span>
+                        <span class="stage-label" id="stage-label-2">Genetics</span>
+                        <span class="stage-label" id="stage-label-3">Plasma</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="contact-form glass" id="screening-form-container">
+                <form id="screening-form" onsubmit="event.preventDefault();">
+
+                    <!-- Step 1: Demographics -->
+                    <div id="wizard-step-1" class="wizard-step active">
+                        <div class="form-group">
+                            <label class="form-label">Age <span class="required">*</span></label>
+                            <input type="number" id="AGE" name="AGE" placeholder="e.g. 72" required min="50" max="100"
+                                step="0.1">
+                            <span class="form-hint">Patient age in years</span>
                         </div>
+                        <div class="form-group">
+                            <label class="form-label">Biological Sex <span class="required">*</span></label>
+                            <select id="PTGENDER" name="PTGENDER" required>
+                                <option value="" disabled selected>Select biological sex</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Education Level <span class="required">*</span></label>
+                            <input type="number" id="PTEDUCAT" name="PTEDUCAT" placeholder="e.g. 16" required min="0"
+                                max="30" step="1">
+                            <span class="form-hint">Total years of formal education (e.g., HS=12, Bachelor's=16)</span>
+                        </div>
+                    </div>
 
-                        <div class="field-block">
-                            <label for="gender">Biological sex assigned at birth</label>
-                            <div class="select-wrapper">
-                                <select id="gender" name="PTGENDER" required>
-                                    <option value="" disabled selected>Select…</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Male">Male</option>
+                    <!-- Step 2: Genetics -->
+                    <div id="wizard-step-2" class="wizard-step">
+                        <div class="form-group">
+                            <div class="toggle-row">
+                                <label class="form-label">APOE4 Carrier Status</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggle-genetics" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span class="toggle-label">Data Available</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div id="genetics-fields">
+                            <div class="info-banner glass">
+                                APOE e4 is the strongest established genetic risk factor for late-onset Alzheimer's
+                                disease.
+                            </div>
+                            <div class="form-group">
+                                <select id="APOE4" name="APOE4">
+                                    <option value="" disabled selected>Select alleles...</option>
+                                    <option value="0">0 alleles (Non-carrier)</option>
+                                    <option value="1">1 allele (Heterozygous)</option>
+                                    <option value="2">2 alleles (Homozygous)</option>
                                 </select>
                             </div>
                         </div>
-
-                        <div class="field-block">
-                            <label for="education">Years of education <span class="unit">(total)</span></label>
-                            <input type="number" id="education" name="PTEDUCAT" min="0" max="30" step="1"
-                                placeholder="e.g. 16" required />
-                            <span class="field-hint">E.g. 12 = high school, 16 = bachelor's</span>
+                        <div id="genetics-disabled-msg" class="disabled-msg" style="display:none;">
+                            Genetic data not available. The cascade will predict based on Demographics alone or proceed
+                            to Plasma if available.
                         </div>
-
                     </div>
 
-                    <div class="step-nav">
-                        <button type="button" class="btn btn-primary" id="next-1">
-                            Continue to Genetics <span class="btn-arrow">→</span>
-                        </button>
-                    </div>
-                </fieldset>
-
-                <!-- ─────────────────────── STEP 2: Genetics ─────────── -->
-                <fieldset class="step-panel" id="step-2" data-step="2">
-                    <legend class="step-legend">
-                        <span class="step-num">02</span>
-                        <span class="step-title">Genetic risk factor</span>
-                    </legend>
-                    <p class="step-desc">
-                        The APOE4 gene variant is the strongest known genetic risk factor for late-onset Alzheimer's.
-                        You may know your status from a genetic test.
-                    </p>
-
-                    <div class="field-grid">
-
-                        <div class="field-block wide">
-                            <label for="apoe4">APOE4 allele count</label>
-                            <div class="radio-group" role="group" aria-labelledby="apoe4-label">
-                                <label class="radio-card" id="apoe4-0-label">
-                                    <input type="radio" name="APOE4" value="0" id="apoe4-0" />
-                                    <span class="rc-icon">0</span>
-                                    <span class="rc-text">No&nbsp;copies<br /><small>Lowest genetic risk</small></span>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="APOE4" value="1" id="apoe4-1" />
-                                    <span class="rc-icon">1</span>
-                                    <span class="rc-text">One&nbsp;copy<br /><small>Moderate genetic risk</small></span>
-                                </label>
-                                <label class="radio-card">
-                                    <input type="radio" name="APOE4" value="2" id="apoe4-2" />
-                                    <span class="rc-icon">2</span>
-                                    <span class="rc-text">Two&nbsp;copies<br /><small>Higher genetic risk</small></span>
+                    <!-- Step 3: Plasma Biomarkers -->
+                    <div id="wizard-step-3" class="wizard-step">
+                        <div class="form-group">
+                            <div class="toggle-row">
+                                <label class="form-label">Plasma Biomarkers</label>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="toggle-plasma" checked>
+                                    <span class="toggle-slider"></span>
+                                    <span class="toggle-label">Data Available</span>
                                 </label>
                             </div>
-                            <p class="inline-optional">
-                                <button type="button" class="link-btn" id="skip-genetics">
-                                    I don't know my APOE4 status — skip this step
-                                </button>
-                            </p>
                         </div>
-
+                        <div id="plasma-fields">
+                            <div class="form-group">
+                                <label class="form-label">pTau-217 / AB42 Ratio</label>
+                                <input type="number" id="pT217_AB42_F" name="pT217_AB42_F" placeholder="0.00"
+                                    step="any">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">AB42 / AB40 Ratio</label>
+                                <input type="number" id="AB42_AB40_F" name="AB42_AB40_F" placeholder="0.00" step="any">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">NfL (Neurofilament Light) <span
+                                        class="form-unit">pg/mL</span></label>
+                                <input type="number" id="NfL_Q" name="NfL_Q" placeholder="0.00" step="any">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">GFAP <span class="form-unit">pg/mL</span></label>
+                                <input type="number" id="GFAP_Q" name="GFAP_Q" placeholder="0.00" step="any">
+                            </div>
+                        </div>
+                        <div id="plasma-disabled-msg" class="disabled-msg" style="display:none;">
+                            Plasma data not available. The cascade will predict based on earlier stages.
+                        </div>
                     </div>
+                </form>
 
-                    <div class="step-nav">
-                        <button type="button" class="btn btn-ghost" id="back-1">← Back</button>
-                        <button type="button" class="btn btn-primary" id="next-2">
-                            Continue to Biomarkers <span class="btn-arrow">→</span>
-                        </button>
-                    </div>
-                </fieldset>
-
-                <!-- ─────────────────────── STEP 3: Plasma Biomarkers ── -->
-                <fieldset class="step-panel" id="step-3" data-step="3">
-                    <legend class="step-legend">
-                        <span class="step-num">03</span>
-                        <span class="step-title">Plasma biomarkers <span class="optional-badge">optional</span></span>
-                    </legend>
-                    <p class="step-desc">
-                        If you or your clinician have plasma (blood-based) biomarker results, enter them below.
-                        These are the most powerful predictors in the model.
-                        <strong>Leave blank if unavailable</strong> — the model will account for missingness gracefully.
-                    </p>
-
-                    <div class="field-grid">
-
-                        <div class="field-block">
-                            <label for="ab42">Aβ42 <span class="unit">(pg/mL)</span></label>
-                            <input type="number" id="ab42" name="AB42_F" min="0" step="any" placeholder="e.g. 892.4" />
-                            <span class="field-hint">Plasma amyloid beta-42</span>
-                        </div>
-
-                        <div class="field-block">
-                            <label for="ab40">Aβ40 <span class="unit">(pg/mL)</span></label>
-                            <input type="number" id="ab40" name="AB40_F" min="0" step="any"
-                                placeholder="e.g. 14200.0" />
-                            <span class="field-hint">Plasma amyloid beta-40</span>
-                        </div>
-
-                        <div class="field-block">
-                            <label for="ab4240">Aβ42/40 ratio</label>
-                            <input type="number" id="ab4240" name="AB42_AB40_F" min="0" step="any"
-                                placeholder="e.g. 0.0628" />
-                            <span class="field-hint">Amyloid burden indicator</span>
-                        </div>
-
-                        <div class="field-block">
-                            <label for="pt217">pT217/Aβ42 ratio <span class="tip-icon"
-                                    title="Strongest AD pathology signal in the model">ⓘ</span></label>
-                            <input type="number" id="pt217" name="pT217_AB42_F" min="0" step="any"
-                                placeholder="e.g. 0.312" />
-                            <span class="field-hint">Phospho-tau 217 / Aβ42 — strongest signal</span>
-                        </div>
-
-                        <div class="field-block">
-                            <label for="nfl">NfL <span class="unit">(pg/mL)</span></label>
-                            <input type="number" id="nfl" name="NfL_Q" min="0" step="any" placeholder="e.g. 18.7" />
-                            <span class="field-hint">Neurofilament Light — neurodegeneration marker</span>
-                        </div>
-
-                        <div class="field-block">
-                            <label for="gfap">GFAP <span class="unit">(pg/mL)</span></label>
-                            <input type="number" id="gfap" name="GFAP_Q" min="0" step="any" placeholder="e.g. 245.0" />
-                            <span class="field-hint">Glial Fibrillary Acidic Protein</span>
-                        </div>
-
-                    </div>
-
-                    <div class="step-nav">
-                        <button type="button" class="btn btn-ghost" id="back-2">← Back</button>
-                        <button type="submit" class="btn btn-submit" id="submit-btn">
-                            <span class="btn-label">Run My Screening</span>
-                            <span class="btn-icon">🌿</span>
-                        </button>
-                    </div>
-                </fieldset>
-
-            </form>
-
-            <!-- ── Loading state ───────────────────────────────────────── -->
-            <div class="loading-panel hidden" id="loading-panel" aria-live="polite" aria-busy="true">
-                <div class="loader-ring">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-                <p class="loading-text">Analysing your profile with care…</p>
-            </div>
-
-            <!-- ── Result panel ────────────────────────────────────────── -->
-            <div class="result-panel hidden" id="result-panel" aria-live="polite">
-
-                <div class="result-icon" id="result-icon" aria-hidden="true"></div>
-                <h2 class="result-category" id="result-category"></h2>
-
-                <!-- Gauge -->
-                <div class="gauge-container" role="img" aria-label="Risk probability gauge">
-                    <svg class="gauge-svg" viewBox="0 0 200 110" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Track arc -->
-                        <path class="gauge-track" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
-                            stroke-linecap="round" />
-                        <!-- Value arc -->
-                        <path class="gauge-fill" id="gauge-arc" d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
-                            stroke-linecap="round" />
-                        <!-- Needle -->
-                        <line class="gauge-needle" id="gauge-needle" x1="100" y1="100" x2="100" y2="28"
-                            stroke-linecap="round" />
-                        <circle cx="100" cy="100" r="6" class="gauge-pivot" />
-                    </svg>
-                    <div class="gauge-value" id="gauge-value">0%</div>
-                    <div class="gauge-labels">
-                        <span>Low</span>
-                        <span>Moderate</span>
-                        <span>High</span>
-                    </div>
-                </div>
-
-                <p class="result-message" id="result-message"></p>
-                <p class="result-stage" id="result-stage"></p>
-
-                <div class="result-actions">
-                    <button type="button" class="btn btn-ghost" id="restart-btn">
-                        ↩ Start a new screening
+                <!-- Wizard Navigation Buttons -->
+                <div class="wizard-nav-buttons">
+                    <button type="button" id="wizard-btn-back" class="submit-btn btn-secondary"
+                        style="opacity:0; pointer-events:none;">
+                        &larr; Back
+                    </button>
+                    <button type="button" id="wizard-btn-next" class="submit-btn">
+                        Next Step &rarr;
+                    </button>
+                    <button type="button" id="wizard-btn-submit" class="submit-btn btn-submit" style="display:none;">
+                        Run Inference Analysis
                     </button>
                 </div>
 
-                <p class="result-disclaimer">
-                    This result is produced by an experimental ML model trained on ADNI research data.
-                    It is <strong>not a diagnosis</strong>. Please share with your healthcare provider.
-                </p>
+                <!-- Loading Overlay -->
+                <div id="screening-loading" class="loading-overlay" style="display:none;">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">Analyzing Profile...</p>
+                    <p class="loading-subtext">Passing data through MirAI XGBoost cascade</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6: Results (Hidden by default, shown after inference) -->
+    <section class="results-section" id="results" style="display:none;">
+        <h2 class="section-title">ANALYSIS REPORT</h2>
+        <div class="results-container">
+            <!-- Main Result Card -->
+            <div class="result-card glass-strong">
+                <div class="result-header" id="result-header-bg">
+                    <div class="result-header-content">
+                        <div class="result-meta">
+                            <span class="result-label">MCI/DEMENTIA RISK ASSESSMENT</span>
+                            <h3 class="result-classification" id="result-classification">--</h3>
+                            <span class="result-stage-badge" id="result-stage-badge">Stage -- Output</span>
+                        </div>
+                        <div class="result-gauge">
+                            <canvas id="risk-gauge-chart" width="180" height="180"></canvas>
+                            <div class="gauge-center">
+                                <span class="gauge-value" id="result-percentage">--%</span>
+                                <span class="gauge-label">RISK</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="result-body">
+                    <h4 class="result-interpretation-title">Clinical Interpretation</h4>
+                    <p class="result-message" id="result-message">--</p>
+                </div>
             </div>
 
-        </main>
+            <!-- Patient Details + Next Steps -->
+            <div class="result-sidebar">
+                <div class="result-details-card glass">
+                    <h4>Patient Details</h4>
+                    <div class="detail-row"><span>Age</span><span id="res-pat-age">--</span></div>
+                    <div class="detail-row"><span>Sex</span><span id="res-pat-sex">--</span></div>
+                    <div class="detail-row"><span>Education</span><span id="res-pat-edu">--</span></div>
+                    <div class="detail-row"><span>APOE4</span><span id="res-pat-apoe">--</span></div>
+                </div>
 
-        <!-- Footer -->
-        <footer class="site-footer">
-            <p>Built with ADNI Data as part of the <strong>MirAI</strong> project.</p>
-        </footer>
+                <div class="result-next-steps glass">
+                    <h4>Recommended Next Steps</h4>
+                    <ul>
+                        <li>Review results with patient</li>
+                        <li>If risk is high, consider further neuropsychological testing or PET imaging</li>
+                        <li>Schedule follow-up in 6 months</li>
+                        <li>Document results in patient EHR</li>
+                    </ul>
+                </div>
 
-    </div><!-- /page-shell -->
+                <div class="result-actions">
+                    <button class="submit-btn" onclick="window.print()">Export / Print Report</button>
+                    <button class="submit-btn btn-secondary" onclick="app.resetWizard()">New Screening</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <script src="/static/app.js"></script>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-disclaimer">
+                <div class="disclaimer-badge">&#x26A0;&#xFE0F; Medical Disclaimer</div>
+                <p>MirAI is an investigational screening tool and <strong>does not replace professional clinical
+                        diagnosis</strong>. Predictions are based on statistical machine learning models (XGBoost)
+                    trained on the ADNI dataset and are intended solely to assist clinical decision-making triage
+                    workflows.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#features">The Cascade</a>
+                <a href="#showcase">Dashboard</a>
+                <a href="#timeline">How it Works</a>
+                <a href="#screening">Screen Patient</a>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2026 MirAI -- Liquid Biopsy-Based Alzheimer's Disease Triage. Research Use Only.</p>
+            </div>
+            <div class="footer-design">
+                ML Pipeline: XGBoost + ADNI Data |
+                Developed for Research Use
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/app.js"></script>
 </body>
 
 </html>

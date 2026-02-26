@@ -50,4 +50,9 @@ trial*.ipynb
 *.env
 secrets.*
 
-
+# ─── Downloaded Templates / Scaffold Files ───────────────────────────────────
+templatemo_597_neural_glass/
+mirai-frontend/
+package.json
+package-lock.json
+node_modules/

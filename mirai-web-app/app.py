@@ -9,9 +9,9 @@ import json
 import numpy as np
 from flask import Flask, request, jsonify, render_template
 
-# ── Path resolution: find the parent project root so we can import inference.py
+# -- Path resolution: find the parent project root so we can import inference.py
 APP_DIR    = os.path.dirname(os.path.abspath(__file__))   # .../mirai-web-app/
-ROOT_DIR   = os.path.dirname(APP_DIR)                     # .../MirAI 2/
+ROOT_DIR   = os.path.dirname(APP_DIR)                     # .../MirAI/
 MODEL_DIR  = os.path.join(ROOT_DIR, "models")
 
 # Add root to sys.path so `inference` module can be imported
@@ -20,16 +20,16 @@ if ROOT_DIR not in sys.path:
 
 from inference import MirAI  # noqa: E402 (import after path tweak)
 
-# ── Flask app ──────────────────────────────────────────────────────────────────
+# -- Flask app ---
 app = Flask(__name__)
 
 # Load models once at startup
-print("⏳  Loading MirAI models …")
+print("[*] Loading MirAI models ...")
 mirai = MirAI(model_dir=MODEL_DIR)
-print("✅  Models loaded successfully.")
+print("[+] Models loaded successfully.")
 
 
-# ── Routes ─────────────────────────────────────────────────────────────────────
+# -- Routes ---
 @app.route("/")
 def index():
     """Serve the main screening UI."""
@@ -47,7 +47,7 @@ def predict():
     Additional for Stage 2:
         APOE4 (0|1|2)
 
-    Additional for Stage 3 (optional – leave absent/null to use NaN):
+    Additional for Stage 3 (optional -- leave absent/null to use NaN):
         AB42_F, AB40_F, AB42_AB40_F, pT217_AB42_F, NfL_Q, GFAP_Q
     """
     try:
@@ -66,7 +66,7 @@ def predict():
             if data.get(field) is None:
                 return jsonify({"error": f"Missing required field: {field}"}), 400
 
-        # ── Coerce types ────────────────────────────────────────────────────────
+        # -- Coerce types ---
         patient = {
             "AGE":      float(data["AGE"]),
             "PTGENDER": str(data["PTGENDER"]),   # "Male" | "Female"
@@ -81,7 +81,7 @@ def predict():
                 val = data.get(pf)
                 patient[pf] = float(val) if val is not None else np.nan
 
-        # ── Choose stage and run prediction ─────────────────────────────────────
+        # -- Choose stage and run prediction ---
         if has_stage3:
             stage = 3
         elif has_stage2:
@@ -97,7 +97,7 @@ def predict():
             tier = "low"
             message = (
                 "Your screening profile suggests a low risk of Alzheimer's at this time. "
-                "Keep nurturing your brain health—stay active, sleep well, and stay connected."
+                "Keep nurturing your brain health -- stay active, sleep well, and stay connected."
             )
         elif prob < 0.60:
             tier = "moderate"
@@ -109,7 +109,7 @@ def predict():
         else:
             tier = "high"
             message = (
-                "Your screening profile suggests elevated risk. This is not a diagnosis—"
+                "Your screening profile suggests elevated risk. This is not a diagnosis -- "
                 "it's an invitation to speak with your doctor. Early consultation can open "
                 "the door to monitoring and care options that make a real difference."
             )
@@ -128,8 +128,8 @@ def predict():
         return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
 
 
-# ── Entry point ────────────────────────────────────────────────────────────────
+# -- Entry point ---
 if __name__ == "__main__":
-    print("\n🌿  MirAI Web Interface is now running.")
+    print("\n[*] MirAI Web Interface is now running.")
     print("    Open your browser at:  http://127.0.0.1:5000\n")
     app.run(debug=True, port=5000)
