@@ -276,7 +276,7 @@ The `stage` parameter accepts `1`, `2`, or `3` to run at any point in the cascad
 ## 📁 Project Structure
 
 ```
-MirAI 2/
+MirAI/
 ├── MirAI_modelling.ipynb              # Main modelling notebook
 ├── inference.py                       # Inference API class (MirAI)
 ├── test.py                            # Quick sanity-test for all 3 stages
@@ -288,14 +288,20 @@ MirAI 2/
 │   ├── mirai_stage2_model.joblib      # Trained Stage 2 classifier (calibrated)
 │   ├── mirai_stage3_model.joblib      # Trained Stage 3 classifier (calibrated)
 │   └── mirai_features.json            # Feature schema for all stages
-├── mirai-web-app/                     # Local web interface (Flask)
+├── mirai-web-app/                     # Glassmorphism web interface (Flask)
 │   ├── app.py                         # Flask server & /predict endpoint
-│   ├── requirements.txt               # Web app dependencies (flask, etc.)
+│   ├── requirements.txt               # Web app dependencies
 │   ├── templates/
-│   │   └── index.html                 # 3-step caring screening UI
+│   │   └── index.html                 # Single-page clinical screening UI
 │   └── static/
-│       ├── style.css                  # Warm palette, animations, layout
-│       └── app.js                     # Step nav, fetch, SVG gauge, results
+│       ├── css/
+│       │   └── style.css              # Glassmorphism design system & animations
+│       ├── js/
+│       │   └── app.js                 # Wizard logic, API integration, Chart.js gauge
+│       └── images/
+│           ├── mirai-stage-01.jpg     # Stage 1 visual (demographics)
+│           ├── mirai-stage-02.jpg     # Stage 2 visual (genetics)
+│           └── mirai-stage-03.jpg     # Stage 3 visual (plasma biomarkers)
 └── [ADNI data CSVs — not in repo, see Data Sources section]
 ```
 
@@ -318,19 +324,33 @@ This project uses data from the **Alzheimer's Disease Neuroimaging Initiative (A
 
 ## 🌿 Running the MirAI Web Interface
 
-A local web interface is included in the `mirai-web-app/` subfolder. It provides a warm, caring 3-step screening UI that runs the MirAI model cascade in your browser — no Jupyter required.
+A local web interface is included in the `mirai-web-app/` subfolder. It features a **glassmorphism-styled single-page application** with a cyberpunk-inspired dark UI, floating particle effects, and a multi-step clinical screening wizard that runs the MirAI model cascade in your browser — no Jupyter required.
+
+**Interface Sections:**
+- **Hero** — MirAI branding, AUC performance stats, and a "Begin Screening" call-to-action
+- **The 3-Stage Cascade** — Visual cards explaining Demographics → Genetics → Plasma stages
+- **Clinical Dashboard** — Hexagonal metric cards showing key statistics
+- **How it Works** — Interactive timeline walking through the clinical workflow
+- **Patient Screening** — Multi-step wizard with toggleable data sections and form validation
+- **Results** — Risk gauge chart (Chart.js), classification badge, and compassionate clinical messaging
 
 ### Folder Structure
 
 ```
 mirai-web-app/
-├── app.py              # Flask backend — loads models & /predict endpoint
-├── requirements.txt    # Backend dependencies
+├── app.py                    # Flask backend — loads models & /predict endpoint
+├── requirements.txt          # Backend dependencies
 ├── templates/
-│   └── index.html      # 3-step screening form UI
+│   └── index.html            # Single-page glassmorphism screening UI
 └── static/
-    ├── style.css       # Palette, animations, layout
-    └── app.js          # Step navigation, fetch, gauge, result display
+    ├── css/
+    │   └── style.css         # Glassmorphism design system, animations, responsive layout
+    ├── js/
+    │   └── app.js            # UI effects, wizard navigation, API integration, gauge chart
+    └── images/
+        ├── mirai-stage-01.jpg
+        ├── mirai-stage-02.jpg
+        └── mirai-stage-03.jpg
 ```
 
 ### Prerequisites
@@ -380,10 +400,10 @@ python mirai-web-app/app.py
 You should see:
 
 ```
-⏳  Loading MirAI models …
-✅  Models loaded successfully.
+[*] Loading MirAI models ...
+[+] Models loaded successfully.
 
-🌿  MirAI Web Interface is now running.
+[*] MirAI Web Interface is now running.
     Open your browser at:  http://127.0.0.1:5000
 ```
 
@@ -395,13 +415,13 @@ Open your browser and navigate to:
 http://127.0.0.1:5000
 ```
 
-You will be greeted by the MirAI screening interface. Work through the 3 steps:
+You will be greeted by the MirAI glassmorphism interface. Scroll through the landing page to explore the cascade explanation, dashboard metrics, and clinical workflow timeline. Then navigate to the **Patient Screening** section and work through the 3 wizard steps:
 
-1. **Demographics** — Age, sex, and years of education.
-2. **Genetics** — Your APOE4 allele count (optional — you can skip this).
-3. **Plasma Biomarkers** — Blood-based biomarker values (all optional; leave blank if unavailable).
+1. **Demographics** — Age, biological sex, and years of education.
+2. **Genetics** — APOE4 allele count (toggle off if unavailable).
+3. **Plasma Biomarkers** — pTau-217/AB42, NfL, GFAP values (toggle off if unavailable).
 
-Click **Run My Screening** and the interface will call the `/predict` endpoint, animate a gauge, and display a compassionate result with supportive messaging.
+Click **Run Inference Analysis** and the interface will call the `/predict` endpoint, display a loading animation, then reveal a full **Analysis Report** with a Chart.js risk gauge, classification, compassionate clinical messaging, and recommended next steps.
 
 ### Step 4 — Stop the Server
 
