@@ -53,6 +53,10 @@ secrets.*
 # ─── Downloaded Templates / Scaffold Files ───────────────────────────────────
 templatemo_597_neural_glass/
 mirai-frontend/
+src/
 package.json
 package-lock.json
 node_modules/
+
+# ─── Model Wheel Files (large, pip-installable) ─────────────────────────────
+*.whl

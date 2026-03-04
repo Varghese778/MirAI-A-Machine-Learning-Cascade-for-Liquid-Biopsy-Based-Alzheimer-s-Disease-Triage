@@ -100,10 +100,10 @@ SHAP values are computed **inside each CV fold** using fold-trained models and a
 | Rank | Feature | Biological Meaning |
 |------|---------|-------------------|
 | 1 | `pT217_AB42_F` | Phospho-tau 217 / Aβ42 plasma ratio — strongest AD pathology signal |
-| 2 | `NfL_Q` | Neurofilament Light — neurodegeneration marker |
-| 3 | `AB42_AB40_F` | Amyloid 42/40 ratio — amyloid burden indicator |
-| 4 | `AGE` | Primary demographic risk factor |
-| 5 | `APOE4` | Genetic predisposition (secondary once pathology measured) |
+| 2 | `PTGENDER` | Biological sex — women have ~2× higher lifetime AD risk |
+| 3 | `NfL_Q` | Neurofilament Light — neurodegeneration marker |
+| 4 | `AB42_AB40_F` | Amyloid 42/40 ratio — amyloid burden indicator |
+| 5 | `AGE` | Primary demographic risk factor |
 
 This ranking aligns precisely with established AD neuropathological mechanisms, confirming biological plausibility rather than statistical artifact.
 
@@ -125,6 +125,10 @@ This ranking aligns precisely with established AD neuropathological mechanisms, 
 | **joblib** | 1.5.3 | Model serialization (`.joblib` artifacts) |
 | **numba** | 0.63.1 | SHAP computation acceleration |
 | **ipykernel** | 7.2.0 | Jupyter notebook execution |
+| **Flask** | latest | Web application backend |
+| **requests** | latest | ASI:One API HTTP client |
+| **python-dotenv** | latest | Secure API key management via `.env` |
+| **Chart.js** | 4.x (CDN) | Risk gauge visualization in web UI |
 
 ### Data Sources (ADNI)
 All data is sourced from the **Alzheimer's Disease Neuroimaging Initiative (ADNI)**:
@@ -333,20 +337,23 @@ A local web interface is included in the `mirai-web-app/` subfolder. It features
 - **How it Works** — Interactive timeline walking through the clinical workflow
 - **Patient Screening** — Multi-step wizard with toggleable data sections and form validation
 - **Results** — Risk gauge chart (Chart.js), classification badge, and compassionate clinical messaging
+- **Emergency Resources Panel** — Auto-shown for high-risk results; includes helpline numbers, doctor links, and clinical trial referrals
+- **ASI:One AI Chatbot** — Context-aware Q&A widget powered by the ASI:One API (`asi1-mini` model); helps patients and clinicians understand screening results
 
 ### Folder Structure
 
 ```
 mirai-web-app/
-├── app.py                    # Flask backend — loads models & /predict endpoint
+├── app.py                    # Flask backend — /predict & /chat endpoints
+├── .env                      # ASI:One API key (not tracked by git)
 ├── requirements.txt          # Backend dependencies
 ├── templates/
-│   └── index.html            # Single-page glassmorphism screening UI
+│   └── index.html            # SPA — wizard, results, emergency panel, chatbot
 └── static/
     ├── css/
-    │   └── style.css         # Glassmorphism design system, animations, responsive layout
+    │   └── style.css         # Glassmorphism design, chatbot & emergency styles
     ├── js/
-    │   └── app.js            # UI effects, wizard navigation, API integration, gauge chart
+    │   └── app.js            # Wizard, API, chart, chatbot logic, formatting
     └── images/
         ├── mirai-stage-01.jpg
         ├── mirai-stage-02.jpg
@@ -377,19 +384,23 @@ med\Scripts\activate
 source med/bin/activate
 ```
 
-Then install Flask (the other packages are already in your environment):
-
-```bash
-pip install flask
-```
-
-Or install all requirements from the web app folder:
+Then install the web app dependencies:
 
 ```bash
 pip install -r mirai-web-app/requirements.txt
 ```
 
-### Step 2 — Start the Local Server
+### Step 2 — Configure the ASI:One API Key
+
+The chatbot requires an **ASI:One** API key. Create (or edit) the file `mirai-web-app/.env`:
+
+```env
+ASI_ONE_API_KEY=your-asi-one-api-key-here
+```
+
+> Get a key at [asi1.ai](https://asi1.ai). The chatbot will still work in degraded mode (error message) if the key is missing.
+
+### Step 3 — Start the Local Server
 
 From the **project root** (`MirAI 2/`), run:
 
@@ -407,7 +418,7 @@ You should see:
     Open your browser at:  http://127.0.0.1:5000
 ```
 
-### Step 3 — Open the Interface
+### Step 4 — Open the Interface
 
 Open your browser and navigate to:
 
@@ -423,7 +434,11 @@ You will be greeted by the MirAI glassmorphism interface. Scroll through the lan
 
 Click **Run Inference Analysis** and the interface will call the `/predict` endpoint, display a loading animation, then reveal a full **Analysis Report** with a Chart.js risk gauge, classification, compassionate clinical messaging, and recommended next steps.
 
-### Step 4 — Stop the Server
+If the result is **High Risk (≥60%)**, an **Emergency Resources Panel** will automatically appear with helpline numbers, doctor referral links, and clinical trial information.
+
+A floating **AI chatbot button** (bottom-right) lets users ask follow-up questions about their results — powered by the ASI:One `asi1-mini` model.
+
+### Step 5 — Stop the Server
 
 Press **`Ctrl + C`** in the terminal to stop the Flask server.
 
@@ -434,5 +449,26 @@ Press **`Ctrl + C`** in the terminal to stop the Flask server.
 <div align="center">
 
 *Built with ❤️ as part of the Codeversity MirAI project.*
+
+---
+
+## 🗺️ Presentation Flowcharts
+
+A standalone visual guide is available in the `flowcharts/` folder for explaining MirAI to judges or stakeholders:
+
+```bash
+# Open directly in your browser
+start flowcharts/index.html     # Windows
+open flowcharts/index.html      # macOS
+```
+
+Two tab-switchable views:
+
+| Tab | Contents |
+|-----|----------|
+| **⚙️ Technical Flowchart** | End-to-end data pipeline: ADNI ingestion → preprocessing → 3-stage cascade → risk tiers → Flask deployment |
+| **🧬 Biological Flowchart** | AD biology rationale — healthy brain → pathology → blood biomarkers → cascade design → SHAP validation (with embedded beeswarm plot) |
+
+Each node includes **"Talking Point"** callouts with ready-to-use judge-facing phrases. The page is fully self-contained (no server needed) and print-friendly.
 
 </div>

@@ -467,6 +467,28 @@
                     </ul>
                 </div>
 
+                <!-- Emergency Resources (shown only for high-risk) -->
+                <div class="result-emergency glass" id="emergency-panel" style="display:none;">
+                    <h4>&#x1F6A8; Immediate Resources</h4>
+                    <p class="emergency-subtitle">Based on the elevated risk score, we recommend contacting a specialist.</p>
+                    <div class="emergency-item">
+                        <span class="emergency-label">Alzheimer's Association 24/7 Helpline</span>
+                        <a href="tel:18002723900" class="emergency-link phone-link">&#x1F4DE; 1-800-272-3900</a>
+                    </div>
+                    <div class="emergency-item">
+                        <span class="emergency-label">Find a Neurologist Near You</span>
+                        <a href="https://www.alz.org/help-support/resources/find-care" target="_blank" class="emergency-link">&#x1F3E5; ALZ.org Care Finder</a>
+                    </div>
+                    <div class="emergency-item">
+                        <span class="emergency-label">Alzheimer's Disease Clinical Trials</span>
+                        <a href="https://clinicaltrials.gov/search?cond=Alzheimer" target="_blank" class="emergency-link">&#x1F52C; ClinicalTrials.gov</a>
+                    </div>
+                    <div class="emergency-item">
+                        <span class="emergency-label">ADNI Research Initiative</span>
+                        <a href="https://adni.loni.usc.edu/" target="_blank" class="emergency-link">&#x1F9EC; adni.loni.usc.edu</a>
+                    </div>
+                </div>
+
                 <div class="result-actions">
                     <button class="submit-btn" onclick="window.print()">Export / Print Report</button>
                     <button class="submit-btn btn-secondary" onclick="app.resetWizard()">New Screening</button>
@@ -500,6 +522,31 @@
             </div>
         </div>
     </footer>
+
+    <!-- Floating Chatbot Widget -->
+    <div id="chatbot-widget" class="chatbot-widget" style="display:none;">
+        <div class="chatbot-header glass" id="chatbot-toggle">
+            <span class="chatbot-title">&#x1F9E0; MirAI Assistant</span>
+            <span class="chatbot-powered">Powered by ASI:One</span>
+            <button class="chatbot-minimize" id="chatbot-minimize-btn">&minus;</button>
+        </div>
+        <div class="chatbot-body" id="chatbot-body">
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-msg bot">
+                    <p>Hello! I'm the MirAI Assistant. I can help you understand the screening results, explain biomarkers, or discuss next steps. Ask me anything.</p>
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <input type="text" id="chatbot-input" placeholder="Ask about the results..." autocomplete="off">
+                <button id="chatbot-send" class="chatbot-send-btn">&#x27A4;</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot FAB (Floating Action Button) -->
+    <button class="chatbot-fab" id="chatbot-fab" style="display:none;" title="Chat with MirAI Assistant">
+        &#x1F4AC;
+    </button>
 
     <script src="/static/js/app.js"></script>
 </body>

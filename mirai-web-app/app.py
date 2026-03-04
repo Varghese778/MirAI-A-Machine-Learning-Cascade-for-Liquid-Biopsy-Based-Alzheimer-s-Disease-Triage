@@ -7,7 +7,12 @@ import os
 import sys
 import json
 import numpy as np
+import requests as http_requests
+from dotenv import load_dotenv
 from flask import Flask, request, jsonify, render_template
+
+# -- Load .env file ---
+load_dotenv()
 
 # -- Path resolution: find the parent project root so we can import inference.py
 APP_DIR    = os.path.dirname(os.path.abspath(__file__))   # .../mirai-web-app/
@@ -126,6 +131,69 @@ def predict():
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": f"Prediction failed: {str(e)}"}), 500
+
+
+# -- ASI:One Chatbot Endpoint ---
+ASI_ONE_API_KEY = os.environ.get("ASI_ONE_API_KEY", "")
+ASI_ONE_URL = "https://api.asi1.ai/v1/chat/completions"
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    """
+    AI chatbot powered by ASI:One.
+    Accepts { "message": "...", "screening_context": {...} }
+    Returns { "reply": "..." }
+    """
+    try:
+        data = request.get_json(force=True)
+        user_msg = data.get("message", "").strip()
+        context = data.get("screening_context", {})
+
+        if not user_msg:
+            return jsonify({"error": "Empty message."}), 400
+
+        if not ASI_ONE_API_KEY:
+            return jsonify({"error": "ASI:One API key not configured."}), 500
+
+        system_prompt = (
+            "You are MirAI Assistant, an Alzheimer's disease screening support chatbot. "
+            "You help clinicians and patients understand their MirAI screening results. "
+            "You do NOT diagnose — you explain risk factors, biomarkers, next steps, "
+            "and provide emotional support. Be compassionate and concise. "
+            "If asked about emergencies, direct them to the Alzheimer's Association "
+            "24/7 Helpline: 1-800-272-3900. "
+            f"Current screening result context: {json.dumps(context)}"
+        )
+
+        resp = http_requests.post(
+            ASI_ONE_URL,
+            headers={
+                "Authorization": f"Bearer {ASI_ONE_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": "asi1-mini",
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_msg},
+                ],
+                "temperature": 0.7,
+                "max_tokens": 512,
+            },
+            timeout=30,
+        )
+
+        resp.raise_for_status()
+        reply = resp.json()["choices"][0]["message"]["content"]
+        return jsonify({"reply": reply})
+
+    except http_requests.exceptions.Timeout:
+        return jsonify({"reply": "The AI service is taking too long. Please try again."}), 504
+    except http_requests.exceptions.RequestException as e:
+        return jsonify({"reply": f"Could not reach AI service: {str(e)}"}), 502
+    except Exception as e:
+        return jsonify({"reply": f"Chat error: {str(e)}"}), 500
 
 
 # -- Entry point ---

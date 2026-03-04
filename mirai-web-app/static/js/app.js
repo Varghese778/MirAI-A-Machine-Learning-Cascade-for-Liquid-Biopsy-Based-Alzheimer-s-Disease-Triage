@@ -460,6 +460,29 @@ const app = {
 
         // Draw gauge chart
         this.renderGaugeChart(result.risk_probability);
+
+        // Show/hide emergency panel based on risk tier
+        const emergencyPanel = document.getElementById('emergency-panel');
+        if (emergencyPanel) {
+            emergencyPanel.style.display = (result.risk_tier === 'high') ? 'block' : 'none';
+        }
+
+        // Show chatbot FAB after results
+        const chatFab = document.getElementById('chatbot-fab');
+        if (chatFab) chatFab.style.display = 'flex';
+
+        // Store screening context for chatbot
+        this.state.screeningContext = {
+            risk_probability: result.risk_probability,
+            risk_tier: result.risk_tier,
+            risk_category: result.risk_category,
+            stage: result.stage,
+            message: result.message,
+            patient_age: inputPayload.AGE,
+            patient_sex: inputPayload.PTGENDER,
+            patient_education: inputPayload.PTEDUCAT,
+            apoe4: inputPayload.APOE4 ?? 'not provided'
+        };
     },
 
     renderGaugeChart(riskPct) {
@@ -506,3 +529,116 @@ app.init();
 
 // Expose globally for onclick handlers
 window.app = app;
+
+
+// =============================================================================
+// 3. CHATBOT (ASI:One Integration)
+// =============================================================================
+
+(function () {
+    const fab = document.getElementById('chatbot-fab');
+    const widget = document.getElementById('chatbot-widget');
+    const minimizeBtn = document.getElementById('chatbot-minimize-btn');
+    const sendBtn = document.getElementById('chatbot-send');
+    const input = document.getElementById('chatbot-input');
+    const messagesEl = document.getElementById('chatbot-messages');
+    const bodyEl = document.getElementById('chatbot-body');
+
+    let isOpen = false;
+
+    function toggleChat() {
+        isOpen = !isOpen;
+        if (isOpen) {
+            widget.style.display = 'flex';
+            fab.style.display = 'none';
+            input.focus();
+        } else {
+            widget.style.display = 'none';
+            fab.style.display = 'flex';
+        }
+    }
+
+    if (fab) fab.addEventListener('click', toggleChat);
+    if (minimizeBtn) minimizeBtn.addEventListener('click', toggleChat);
+
+    function formatBotMessage(text) {
+        // Sanitize HTML entities first
+        let s = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        // Bold: **text** or __text__
+        s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/__(.+?)__/g, '<strong>$1</strong>');
+        // Italic: *text* or _text_
+        s = s.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        s = s.replace(/_(.+?)_/g, '<em>$1</em>');
+        // Inline code: `text`
+        s = s.replace(/`(.+?)`/g, '<code>$1</code>');
+        // Bullet lists: lines starting with - or •
+        s = s.replace(/^[\-•]\s+(.+)$/gm, '<li>$1</li>');
+        s = s.replace(/(<li>.*<\/li>\n?)+/g, '<ul>$&</ul>');
+        // Numbered lists: lines starting with 1. 2. etc.
+        s = s.replace(/^\d+\.\s+(.+)$/gm, '<li>$1</li>');
+        // Newlines to <br> (but not inside list items)
+        s = s.replace(/\n/g, '<br>');
+        // Clean up double <br> around lists
+        s = s.replace(/<br><ul>/g, '<ul>').replace(/<\/ul><br>/g, '</ul>');
+        s = s.replace(/<br><li>/g, '<li>').replace(/<\/li><br>/g, '</li>');
+        return s;
+    }
+
+    function appendMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = `chat-msg ${sender}`;
+        const p = document.createElement('p');
+        if (sender === 'bot') {
+            p.innerHTML = formatBotMessage(text);
+        } else {
+            p.textContent = text;
+        }
+        div.appendChild(p);
+        messagesEl.appendChild(div);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    async function sendMessage() {
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        appendMessage(msg, 'user');
+        input.value = '';
+        input.disabled = true;
+        sendBtn.disabled = true;
+
+        // Show typing indicator
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'chat-msg bot typing';
+        typingDiv.innerHTML = '<p>Thinking<span class="dot-anim">...</span></p>';
+        messagesEl.appendChild(typingDiv);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+
+        try {
+            const resp = await fetch('/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: msg,
+                    screening_context: app.state.screeningContext || {}
+                })
+            });
+            const data = await resp.json();
+            typingDiv.remove();
+            appendMessage(data.reply || data.error || 'No response.', 'bot');
+        } catch (err) {
+            typingDiv.remove();
+            appendMessage('Connection error. Please try again.', 'bot');
+        }
+
+        input.disabled = false;
+        sendBtn.disabled = false;
+        input.focus();
+    }
+
+    if (sendBtn) sendBtn.addEventListener('click', sendMessage);
+    if (input) input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') sendMessage();
+    });
+})();

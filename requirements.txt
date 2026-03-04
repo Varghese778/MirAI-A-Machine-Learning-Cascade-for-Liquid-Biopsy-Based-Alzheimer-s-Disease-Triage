@@ -14,3 +14,27 @@ joblib==1.5.3
 numba==0.63.1
 ipykernel==7.2.0
 jupyter
+
+
+
+
+Backend & Machine Learning
+1. Python 
+2. XGBoost 
+3. scikit-learn 
+4. pandas 
+5. NumPy 
+6. SciPy 
+7. SHAP 
+8. joblib 
+10. Numba 
+
+Web Framework
+1. Flask 
+2. Gunicorn 
+
+Frontend
+1. HTML5 
+2. CSS3 
+3. Vanilla 
+4. Chart.js

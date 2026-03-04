@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MirAI — Project Flowcharts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a14;
+            color: #e0d4f5;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== BACKGROUND ===== */
+        .bg-gradient {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(75, 0, 130, 0.5) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 37, 99, 0.5) 0%, transparent 50%),
+                linear-gradient(135deg, #08081a 0%, #1a0e2e 50%, #08081a 100%);
+        }
+
+        /* ===== HEADER ===== */
+        .page-header {
+            text-align: center;
+            padding: 60px 20px 30px;
+        }
+        .page-header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e0a3ff, #ff69b4, #9370db);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .page-header p {
+            color: rgba(224,163,255,0.6);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ===== TAB SWITCHER ===== */
+        .tab-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px auto 40px;
+        }
+        .tab-btn {
+            padding: 12px 32px;
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: #c9a3e8;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .tab-btn:hover { background: rgba(255,255,255,0.08); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(147,112,219,0.35), rgba(255,105,180,0.25));
+            border-color: rgba(147,112,219,0.5);
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(147,112,219,0.3);
+        }
+
+        /* ===== FLOWCHART CONTAINER ===== */
+        .flowchart-panel { display: none; max-width: 1000px; margin: 0 auto; padding: 0 20px 80px; }
+        .flowchart-panel.active { display: block; }
+
+        .flowchart-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e0a3ff;
+            margin-bottom: 8px;
+        }
+        .flowchart-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: rgba(224,163,255,0.5);
+            margin-bottom: 40px;
+        }
+
+        /* ===== FLOW NODES ===== */
+        .flow-track {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Vertical connector */
+        .connector {
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(180deg, rgba(147,112,219,0.6), rgba(255,105,180,0.4));
+            position: relative;
+        }
+        .connector::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 8px solid rgba(255,105,180,0.5);
+        }
+
+        /* Arrow label on connector */
+        .connector-label {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.7rem;
+            color: rgba(255,105,180,0.7);
+            font-weight: 600;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
+        /* Node card */
+        .flow-node {
+            width: 100%;
+            max-width: 680px;
+            border-radius: 18px;
+            padding: 28px 30px;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .flow-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(147,112,219,0.2);
+        }
+
+        .node-start {
+            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
+            border-color: rgba(16,185,129,0.3);
+            text-align: center;
+        }
+        .node-process {
+            background: rgba(147,112,219,0.08);
+            border-color: rgba(147,112,219,0.2);
+        }
+        .node-stage1 {
+            background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.04));
+            border-color: rgba(59,130,246,0.3);
+        }
+        .node-stage2 {
+            background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04));
+            border-color: rgba(245,158,11,0.3);
+        }
+        .node-stage3 {
+            background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.04));
+            border-color: rgba(239,68,68,0.3);
+        }
+        .node-output {
+            background: linear-gradient(135deg, rgba(255,105,180,0.12), rgba(147,112,219,0.08));
+            border-color: rgba(255,105,180,0.3);
+        }
+        .node-end {
+            background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(147,112,219,0.1));
+            border-color: rgba(16,185,129,0.3);
+            text-align: center;
+        }
+
+        /* Bio-specific */
+        .node-bio-healthy {
+            background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.04));
+            border-color: rgba(16,185,129,0.3);
+        }
+        .node-bio-problem {
+            background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(245,158,11,0.06));
+            border-color: rgba(239,68,68,0.25);
+        }
+        .node-bio-marker {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(147,112,219,0.06));
+            border-color: rgba(59,130,246,0.25);
+        }
+        .node-bio-solution {
+            background: linear-gradient(135deg, rgba(147,112,219,0.15), rgba(255,105,180,0.08));
+            border-color: rgba(147,112,219,0.35);
+        }
+
+        .node-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        .badge-data   { background: rgba(16,185,129,0.2); color: #34d399; }
+        .badge-ml     { background: rgba(147,112,219,0.2); color: #c4b5fd; }
+        .badge-stage1 { background: rgba(59,130,246,0.2); color: #93c5fd; }
+        .badge-stage2 { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .badge-stage3 { background: rgba(239,68,68,0.2); color: #fca5a5; }
+        .badge-output { background: rgba(255,105,180,0.2); color: #ff9ed0; }
+        .badge-bio    { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .badge-risk   { background: rgba(239,68,68,0.2); color: #fca5a5; }
+        .badge-marker { background: rgba(59,130,246,0.2); color: #93c5fd; }
+        .badge-sol    { background: rgba(147,112,219,0.2); color: #c4b5fd; }
+
+        .node-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+        .node-desc {
+            font-size: 0.85rem;
+            color: rgba(224,163,255,0.7);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .node-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .node-detail {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 10px 14px;
+        }
+        .node-detail-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(224,163,255,0.4);
+            margin-bottom: 3px;
+        }
+        .node-detail-value {
+            font-size: 0.82rem;
+            color: #e0a3ff;
+            font-weight: 500;
+        }
+
+        /* Split decision node */
+        .decision-split {
+            display: flex;
+            width: 100%;
+            max-width: 680px;
+            gap: 20px;
+        }
+        .decision-branch {
+            flex: 1;
+            border-radius: 14px;
+            padding: 18px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .branch-low {
+            background: rgba(16,185,129,0.1);
+            border-color: rgba(16,185,129,0.25);
+        }
+        .branch-high {
+            background: rgba(239,68,68,0.1);
+            border-color: rgba(239,68,68,0.25);
+        }
+        .branch-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        .branch-low .branch-label { color: #34d399; }
+        .branch-high .branch-label { color: #f87171; }
+        .branch-text {
+            font-size: 0.8rem;
+            color: rgba(224,163,255,0.65);
+            line-height: 1.5;
+        }
+
+        /* Talking point callout */
+        .talk-point {
+            background: rgba(255,105,180,0.06);
+            border-left: 3px solid rgba(255,105,180,0.4);
+            border-radius: 0 10px 10px 0;
+            padding: 12px 16px;
+            margin-top: 12px;
+        }
+        .talk-point-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,105,180,0.6);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .talk-point-text {
+            font-size: 0.8rem;
+            color: rgba(224,163,255,0.7);
+            line-height: 1.5;
+        }
+
+        /* Bio chain visual */
+        .bio-chain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .bio-chip {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .chip-gene { background: rgba(245,158,11,0.15); color: #fbbf24; border-color: rgba(245,158,11,0.3); }
+        .chip-protein { background: rgba(59,130,246,0.15); color: #60a5fa; border-color: rgba(59,130,246,0.3); }
+        .chip-damage { background: rgba(239,68,68,0.15); color: #f87171; border-color: rgba(239,68,68,0.3); }
+        .chip-marker { background: rgba(147,112,219,0.15); color: #c4b5fd; border-color: rgba(147,112,219,0.3); }
+        .chip-arrow {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.2);
+        }
+
+        /* Print */
+        @media print {
+            body { background: #fff; color: #222; }
+            .bg-gradient { display: none; }
+            .flow-node, .decision-branch { border: 1px solid #ccc; background: #f9f9f9; }
+            .tab-bar { display: none; }
+            .flowchart-panel { display: block !important; page-break-after: always; }
+            .node-title { color: #111; }
+            .node-desc, .branch-text, .talk-point-text { color: #444; }
+        }
+
+        @media (max-width: 600px) {
+            .flow-node { padding: 20px 18px; }
+            .node-detail-grid { grid-template-columns: 1fr; }
+            .decision-split { flex-direction: column; }
+            .page-header h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="page-header">
+        <h1>MirAI Project Flowcharts</h1>
+        <p>Visual guides for explaining the technical architecture and biological rationale to the judges</p>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('technical')">&#x2699;&#xFE0F; Technical Flowchart</button>
+        <button class="tab-btn" onclick="switchTab('biological')">&#x1F9EC; Biological Flowchart</button>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- TECHNICAL FLOWCHART                                                 -->
+    <!-- ================================================================== -->
+    <div class="flowchart-panel active" id="panel-technical">
+        <div class="flowchart-title">Technical Architecture Flowchart</div>
+        <div class="flowchart-subtitle">End-to-end data pipeline, ML cascade, and web deployment</div>
+
+        <div class="flow-track">
+
+            <!-- 1. Data Sources -->
+            <div class="flow-node node-start">
+                <span class="node-badge badge-data">Data Ingestion</span>
+                <div class="node-title">ADNI Clinical Data Sources</div>
+                <div class="node-desc">4 CSV exports from the Alzheimer's Disease Neuroimaging Initiative (ADNI), covering 2,000+ longitudinal patient visits.</div>
+                <div class="node-detail-grid">
+                    <div class="node-detail">
+                        <div class="node-detail-label">File 1</div>
+                        <div class="node-detail-value">ADNIMERGE — Demographics, cognition, diagnosis</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">File 2</div>
+                        <div class="node-detail-value">APOERES — APOE genotyping results</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">File 3</div>
+                        <div class="node-detail-value">UPENN Plasma — Fujirebio/Quanterix blood biomarkers</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">File 4</div>
+                        <div class="node-detail-value">UPENN CSF — Roche Elecsys (reference only, excluded)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">Merge on RID + VISCODE</span></div>
+
+            <!-- 2. Preprocessing -->
+            <div class="flow-node node-process">
+                <span class="node-badge badge-ml">Preprocessing</span>
+                <div class="node-title">Data Cleaning & Feature Engineering</div>
+                <div class="node-desc">Merge datasets by patient ID (RID) and visit code. Encode binary target: CN → 0, MCI/Dementia → 1. Purge all diagnostic cognitive scores (MMSE, CDR, ADAS-Cog) to prevent label leakage.</div>
+                <div class="node-detail-grid">
+                    <div class="node-detail">
+                        <div class="node-detail-label">Target Variable</div>
+                        <div class="node-detail-value">DX_bl → Binary (CN vs MCI/Dementia)</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Leakage Guard</div>
+                        <div class="node-detail-value">MMSE, CDR, FAQ, ECog strictly removed</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Missing Data</div>
+                        <div class="node-detail-value">MNAR — XGBoost native NaN + _missing flags</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Split Strategy</div>
+                        <div class="node-detail-value">GroupShuffleSplit by RID (patient-level)</div>
+                    </div>
+                </div>
+                <div class="talk-point">
+                    <div class="talk-point-label">&#x1F4AC; Talking Point</div>
+                    <div class="talk-point-text">"We remove all cognitive test scores from features because the diagnosis label IS based on those scores — using them would be like giving the model the answer sheet."</div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">Train/Test split (patient-isolated)</span></div>
+
+            <!-- 3. Stage 1 -->
+            <div class="flow-node node-stage1">
+                <span class="node-badge badge-stage1">Stage 1 — Demographics</span>
+                <div class="node-title">XGBoost Classifier: Low-Cost Screen</div>
+                <div class="node-desc">Uses only universally available, zero-cost demographic features. Serves as the baseline gate — low-risk patients stop here.</div>
+                <div class="node-detail-grid">
+                    <div class="node-detail">
+                        <div class="node-detail-label">Features</div>
+                        <div class="node-detail-value">AGE, PTGENDER, PTEDUCAT</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Performance</div>
+                        <div class="node-detail-value">AUC ≈ 0.67</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Algorithm</div>
+                        <div class="node-detail-value">XGBClassifier + GridSearchCV</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">CV Strategy</div>
+                        <div class="node-detail-value">StratifiedGroupKFold (precomputed)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">OOF predictions passed forward</span></div>
+
+            <!-- 4. Stage 2 -->
+            <div class="flow-node node-stage2">
+                <span class="node-badge badge-stage2">Stage 2 — Genetic Augmentation</span>
+                <div class="node-title">XGBoost + APOE4 Genotype</div>
+                <div class="node-desc">Adds APOE ε4 allele carrier status — the strongest known genetic risk factor for late-onset AD. Out-of-Fold (OOF) predictions from Stage 1 are also fed in as a stacked feature.</div>
+                <div class="node-detail-grid">
+                    <div class="node-detail">
+                        <div class="node-detail-label">Added Feature</div>
+                        <div class="node-detail-value">APOE4 (0, 1, or 2 alleles)</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Performance</div>
+                        <div class="node-detail-value">AUC ≈ 0.70</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Calibration</div>
+                        <div class="node-detail-value">Isotonic Regression (CalibratedClassifierCV)</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Stacking Input</div>
+                        <div class="node-detail-value">Stage 1 OOF probability via cross_val_predict</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">OOF predictions passed forward</span></div>
+
+            <!-- 5. Stage 3 -->
+            <div class="flow-node node-stage3">
+                <span class="node-badge badge-stage3">Stage 3 — Plasma Liquid Biopsy</span>
+                <div class="node-title">XGBoost + Blood-Based Biomarkers</div>
+                <div class="node-desc">The most powerful stage — integrates 6 plasma biomarkers from a simple blood draw. No lumbar puncture needed. Achieves a statistically significant performance lift (ΔAUC ≈ +0.105, p &lt; 0.001).</div>
+                <div class="node-detail-grid">
+                    <div class="node-detail">
+                        <div class="node-detail-label">Plasma Features</div>
+                        <div class="node-detail-value">AB42, AB40, AB42/AB40, pTau217/AB42, NfL, GFAP</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Performance</div>
+                        <div class="node-detail-value">AUC ≈ 0.80 (ΔAUC +0.105 vs Stage 2)</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Validation</div>
+                        <div class="node-detail-value">Paired bootstrap test (n=2000, p &lt; 0.001)</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">MNAR Handling</div>
+                        <div class="node-detail-value">Binary _missing flags + native NaN splits</div>
+                    </div>
+                </div>
+                <div class="talk-point">
+                    <div class="talk-point-label">&#x1F4AC; Talking Point</div>
+                    <div class="talk-point-text">"Stage 3 uses only a blood test — no spinal tap. This is what makes MirAI non-invasive. The AUC jump from 0.70 to 0.80 is statistically proven with 2,000 bootstrap iterations."</div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">Risk probability output</span></div>
+
+            <!-- 6. Decision -->
+            <div class="flow-node node-output" style="text-align:center;">
+                <span class="node-badge badge-output">Decision Gate</span>
+                <div class="node-title">Risk Stratification</div>
+                <div class="node-desc">Calibrated probability is classified into risk tiers with compassionate clinical messaging.</div>
+            </div>
+
+            <div class="connector" style="height:24px;"></div>
+
+            <div class="decision-split">
+                <div class="decision-branch branch-low">
+                    <div class="branch-label">&#x2705; Low Risk (&lt;30%)</div>
+                    <div class="branch-text">Reassurance messaging. Continue routine monitoring. No further testing needed.</div>
+                </div>
+                <div class="decision-branch" style="background:rgba(245,158,11,0.1); border-color:rgba(245,158,11,0.25);">
+                    <div class="branch-label" style="color:#fbbf24;">&#x26A0;&#xFE0F; Moderate (30–60%)</div>
+                    <div class="branch-text">Recommend sharing results with healthcare provider for further conversation.</div>
+                </div>
+                <div class="decision-branch branch-high">
+                    <div class="branch-label">&#x1F6A8; High Risk (≥60%)</div>
+                    <div class="branch-text">Emergency resources shown. Doctor links, helpline numbers, clinical trial referrals.</div>
+                </div>
+            </div>
+
+            <div class="connector" style="height:24px;"></div>
+
+            <!-- 7. Web Deployment -->
+            <div class="flow-node node-process">
+                <span class="node-badge badge-ml">Web Deployment</span>
+                <div class="node-title">Flask + Glassmorphism UI + ASI:One Chatbot</div>
+                <div class="node-desc">Trained models exported as .joblib artifacts. Flask backend serves a 3-step wizard UI. After screening, an AI chatbot (ASI:One) helps explain results.</div>
+                <div class="node-detail-grid">
+                    <div class="node-detail">
+                        <div class="node-detail-label">Backend</div>
+                        <div class="node-detail-value">Flask (Python) — /predict & /chat endpoints</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Frontend</div>
+                        <div class="node-detail-value">HTML5, CSS3, Vanilla JS, Chart.js</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">AI Chatbot</div>
+                        <div class="node-detail-value">ASI:One (asi1-mini) — context-aware Q&A</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Model Format</div>
+                        <div class="node-detail-value">3× .joblib files (Stage 1, 2, 3)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">Final output</span></div>
+
+            <div class="flow-node node-end">
+                <span class="node-badge badge-data">Complete</span>
+                <div class="node-title">Clinician Receives Actionable Report</div>
+                <div class="node-desc">Risk gauge, clinical interpretation, patient details, emergency resources (if high risk), export/print capability, and AI assistant for follow-up questions.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- BIOLOGICAL FLOWCHART                                                -->
+    <!-- ================================================================== -->
+    <div class="flowchart-panel" id="panel-biological">
+        <div class="flowchart-title">Biological Rationale Flowchart</div>
+        <div class="flowchart-subtitle">Why this project exists — the AD biology that drives every design decision</div>
+
+        <div class="flow-track">
+
+            <!-- 1. Healthy Brain -->
+            <div class="flow-node node-bio-healthy">
+                <span class="node-badge badge-bio">Healthy Brain</span>
+                <div class="node-title">Normal Brain Function</div>
+                <div class="node-desc">In a healthy brain, neurons communicate through synapses. Two key proteins are cleared normally:</div>
+                <div class="bio-chain">
+                    <span class="bio-chip chip-protein">Amyloid-β (Aβ)</span>
+                    <span class="chip-arrow">→</span>
+                    <span class="bio-chip chip-protein" style="background:rgba(16,185,129,0.15); color:#34d399;">Cleared Normally</span>
+                </div>
+                <div class="bio-chain">
+                    <span class="bio-chip chip-protein">Tau Protein</span>
+                    <span class="chip-arrow">→</span>
+                    <span class="bio-chip chip-protein" style="background:rgba(16,185,129,0.15); color:#34d399;">Stabilizes Microtubules</span>
+                </div>
+                <div class="talk-point">
+                    <div class="talk-point-label">&#x1F4AC;</div>
+                    <div class="talk-point-text">"Amyloid-β and Tau are normal brain proteins. In a healthy person, Aβ is produced and cleared, and Tau helps maintain the structure inside neurons — like scaffolding."</div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">What goes wrong in AD?</span></div>
+
+            <!-- 2. AD Pathology -->
+            <div class="flow-node node-bio-problem">
+                <span class="node-badge badge-risk">Alzheimer's Pathology</span>
+                <div class="node-title">The Amyloid Cascade & Tau Tangle Formation</div>
+                <div class="node-desc">In Alzheimer's, Aβ clearance fails. Amyloid accumulates into toxic plaques. Tau becomes hyperphosphorylated ("pTau"), detaches from microtubules, and forms neurofibrillary tangles. Neurons die.</div>
+                <div class="bio-chain">
+                    <span class="bio-chip chip-protein">Aβ Overproduction</span>
+                    <span class="chip-arrow">→</span>
+                    <span class="bio-chip chip-damage">Amyloid Plaques</span>
+                    <span class="chip-arrow">→</span>
+                    <span class="bio-chip chip-damage">Synapse Loss</span>
+                </div>
+                <div class="bio-chain">
+                    <span class="bio-chip chip-protein">Tau Hyperphosphorylation</span>
+                    <span class="chip-arrow">→</span>
+                    <span class="bio-chip chip-damage">Neurofibrillary Tangles</span>
+                    <span class="chip-arrow">→</span>
+                    <span class="bio-chip chip-damage">Neuronal Death</span>
+                </div>
+                <div class="talk-point">
+                    <div class="talk-point-label">&#x1F4AC;</div>
+                    <div class="talk-point-text">"Alzheimer's is driven by two toxic processes: sticky amyloid plaques outside neurons, and tangled Tau inside neurons. Both destroy brain cells years before any symptoms appear — that's the window MirAI targets."</div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">How do we detect this non-invasively?</span></div>
+
+            <!-- 3. Biomarkers in Blood -->
+            <div class="flow-node node-bio-marker">
+                <span class="node-badge badge-marker">Liquid Biopsy — Blood Biomarkers</span>
+                <div class="node-title">Plasma Biomarkers Leak into the Bloodstream</div>
+                <div class="node-desc">Brain pathology leaves molecular fingerprints in the blood. Recent breakthroughs (2020–2025) made it possible to measure these in a simple blood draw — no spinal tap needed.</div>
+
+                <div class="node-detail-grid" style="margin-top:14px;">
+                    <div class="node-detail">
+                        <div class="node-detail-label">pTau-217 / Aβ42 Ratio</div>
+                        <div class="node-detail-value">The #1 predictor. Phospho-tau 217 rises as tangles form; Aβ42 drops as plaques trap it. High ratio = strong AD signal.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Aβ42 / Aβ40 Ratio</div>
+                        <div class="node-detail-value">Aβ42 is the "sticky" form that clumps. When more clumps into plaques, less is free in blood → ratio decreases in AD.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">NfL (Neurofilament Light)</div>
+                        <div class="node-detail-value">Released when neurons are damaged or dying. A general neurodegeneration marker — rises in AD, MS, TBI, and other conditions.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">GFAP (Glial Fibrillary Acidic Protein)</div>
+                        <div class="node-detail-value">Released by astrocytes (brain support cells) during inflammation. Elevated GFAP = neuroinflammation response to amyloid.</div>
+                    </div>
+                </div>
+
+                <div class="talk-point">
+                    <div class="talk-point-label">&#x1F4AC;</div>
+                    <div class="talk-point-text">"These four markers are like smoke alarms — each detecting a different type of fire. pTau-217 detects tangles, Aβ ratio detects plaques, NfL detects dying neurons, and GFAP detects brain inflammation. Together, they give us a multi-angle view from just a blood sample."</div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">What about risk factors?</span></div>
+
+            <!-- 4. Risk Factors -->
+            <div class="flow-node node-bio-problem">
+                <span class="node-badge badge-risk">Risk Factors</span>
+                <div class="node-title">Who Is at Risk? Demographics & Genetics</div>
+                <div class="node-desc">AD risk is influenced by non-modifiable factors that MirAI captures in Stages 1 and 2:</div>
+
+                <div class="node-detail-grid" style="margin-top:14px;">
+                    <div class="node-detail">
+                        <div class="node-detail-label">Age</div>
+                        <div class="node-detail-value">Risk doubles every ~5 years after age 65. The #1 demographic risk factor.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Education</div>
+                        <div class="node-detail-value">"Cognitive reserve" theory — more education may buffer against early symptoms, masking underlying pathology.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Biological Sex</div>
+                        <div class="node-detail-value">Women have ~2× higher lifetime risk, partly due to longevity and hormonal factors (post-menopause estrogen decline).</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">APOE ε4 Allele</div>
+                        <div class="node-detail-value">1 copy → 3× risk. 2 copies → 8–12× risk. Impairs Aβ clearance. The strongest genetic risk factor for late-onset AD.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">Why a 3-stage cascade?</span></div>
+
+            <!-- 5. Clinical Rationale for Cascade -->
+            <div class="flow-node node-bio-solution">
+                <span class="node-badge badge-sol">Design Rationale</span>
+                <div class="node-title">Why MirAI Uses a 3-Stage Cascade</div>
+                <div class="node-desc">Real clinical triage works in escalation — you don't order expensive tests for everyone. MirAI mirrors this philosophy:</div>
+
+                <div class="node-detail-grid" style="margin-top:14px;">
+                    <div class="node-detail">
+                        <div class="node-detail-label">Stage 1 — Free</div>
+                        <div class="node-detail-value">Age, sex, education are already in the patient file. Cost: $0. Every patient gets screened.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Stage 2 — ~$100–200</div>
+                        <div class="node-detail-value">APOE genotyping is a one-time saliva/blood test. Only flagged patients proceed.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Stage 3 — ~$200–500</div>
+                        <div class="node-detail-value">Plasma biomarker panel (blood draw). Much cheaper and safer than PET ($3,000+) or lumbar puncture.</div>
+                    </div>
+                    <div class="node-detail">
+                        <div class="node-detail-label">Alternative (Avoided)</div>
+                        <div class="node-detail-value">PET Scan: ~$3,000–5,000. Lumbar Puncture: invasive, painful, $500–1,500. MirAI replaces both as a pre-screen.</div>
+                    </div>
+                </div>
+
+                <div class="talk-point">
+                    <div class="talk-point-label">&#x1F4AC; Key Selling Point</div>
+                    <div class="talk-point-text">"MirAI saves the healthcare system from ordering expensive PET scans on everyone. It narrows down who actually needs further testing — like a funnel. Only the highest-risk patients get escalated, saving thousands of dollars per patient."</div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">What validates this approach?</span></div>
+
+            <!-- 6. SHAP Validation -->
+            <div class="flow-node node-bio-marker">
+                <span class="node-badge badge-marker">Biological Validation</span>
+                <div class="node-title">SHAP Analysis Confirms Biology</div>
+                <div class="node-desc">We used SHAP (SHapley Additive exPlanations) to ask the model: "What features matter most?" The ranking matches known AD biology perfectly:</div>
+
+                <div style="margin-top:14px;">
+                    <div class="bio-chain" style="justify-content:flex-start;">
+                        <span class="bio-chip chip-marker" style="min-width:26px; text-align:center;">#1</span>
+                        <span class="bio-chip chip-protein">pTau-217/Aβ42</span>
+                        <span style="font-size:0.75rem; color:rgba(224,163,255,0.5);">— Tau pathology (strongest AD signal)</span>
+                    </div>
+                    <div class="bio-chain" style="justify-content:flex-start;">
+                        <span class="bio-chip chip-marker" style="min-width:26px; text-align:center;">#2</span>
+                        <span class="bio-chip chip-gene">PTGENDER</span>
+                        <span style="font-size:0.75rem; color:rgba(224,163,255,0.5);">— Biological sex (demographic risk)</span>
+                    </div>
+                    <div class="bio-chain" style="justify-content:flex-start;">
+                        <span class="bio-chip chip-marker" style="min-width:26px; text-align:center;">#3</span>
+                        <span class="bio-chip chip-damage">NfL</span>
+                        <span style="font-size:0.75rem; color:rgba(224,163,255,0.5);">— Neurodegeneration</span>
+                    </div>
+                    <div class="bio-chain" style="justify-content:flex-start;">
+                        <span class="bio-chip chip-marker" style="min-width:26px; text-align:center;">#4</span>
+                        <span class="bio-chip chip-protein">Aβ42/Aβ40</span>
+                        <span style="font-size:0.75rem; color:rgba(224,163,255,0.5);">— Amyloid burden</span>
+                    </div>
+                    <div class="bio-chain" style="justify-content:flex-start;">
+                        <span class="bio-chip chip-marker" style="min-width:26px; text-align:center;">#5</span>
+                        <span class="bio-chip chip-gene">AGE</span>
+                        <span style="font-size:0.75rem; color:rgba(148, 123, 161, 0.5);">— Primary demographic risk</span>
+                    </div>
+                </div>
+
+                <div style="margin-top:18px; text-align:center;">
+                    <img src="output.png" alt="SHAP Summary Beeswarm Plot" style="max-width:100%; border-radius:12px; border:1px solid rgba(255,255,255,0.1); box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+                    <div style="font-size:0.72rem; color:rgba(224,163,255,0.45); margin-top:8px; font-style:italic;">
+                        SHAP beeswarm plot — each dot is a patient. Horizontal position = impact on prediction. Color = feature value (red=high, blue=low).
+                    </div>
+                </div>
+
+                <div class="talk-point">
+                    <div class="talk-point-label">&#x1F4AC; Explain To Judges</div>
+                    <div class="talk-point-text">"We never told the model what these biomarkers mean biologically. It learned independently that pTau-217 is the most important — which is exactly what researchers found in clinical studies. This confirms the model is learning real biology, not statistical noise."</div>
+                </div>
+            </div>
+
+            <div class="connector"><span class="connector-label">The bottom line</span></div>
+
+            <!-- 7. Conclusion -->
+            <div class="flow-node node-end">
+                <span class="node-badge badge-bio">Mission</span>
+                <div class="node-title">Early Detection Saves Lives</div>
+                <div class="node-desc" style="max-width:520px; margin:0 auto;">
+                    Alzheimer's pathology begins <strong style="color:#ff69b4;">15–20 years</strong> before symptoms appear. By the time memory loss is noticeable, significant brain damage has already occurred.
+                    <br><br>
+                    MirAI aims to <strong style="color:#e0a3ff;">catch the disease in its silent phase</strong> — using a non-invasive, affordable blood test — so patients and doctors can act earlier, when interventions (lifestyle changes, emerging drugs like Lecanemab) are most effective.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.flowchart-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('panel-' + tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
